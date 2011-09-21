@@ -1,10 +1,26 @@
 function [peaks]=wavePick(dcfpathname,debugFlag)
 %[peaks]=wavePick(dcfpathname,debugFlag)
 % The main wavelet peak picking function for IVFC.
-
-% Initialized by David Damm.
-% Modified and mantained by Chaofeng Wang.
-% Updated 2011.
+%
+%	wavePick is free software: you can redistribute it and/or modify
+%	it under the terms of the GNU General Public License as published by
+%	the Free Software Foundation, either version 3 of the License, or
+%	(at your option) any later version.
+%	
+%	It is distributed in the hope that it will be useful,
+%	but WITHOUT ANY WARRANTY; without even the implied warranty of
+%	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%	GNU General Public License for more details.
+%	
+%	You should have received a copy of the GNU General Public License
+%	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+%
+%	Initialized by David Damm.
+%	Modified and mantained by Chaofeng Wang.
+%
+%	Website - https://github.com/silencej/ivfcWavePicker
+%
+%	Copyright, 2011 Chaofeng Wang <owen263@gmail.com>
 
 %% Settings.
 devCoef=1; % Used in thresholding. seekthresh_pos = x_out_med + devCoef * x_out_dev.

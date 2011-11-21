@@ -1,4 +1,4 @@
-function filenames=getDcfFileNames
+function filenames=getDcfFilenames
 % filenames will always be a cell array.
 
 [filename,pathname] = uigetfile({'*.dcf;*.DCF;','Dcf Files';'*.*','All'},'Select DCFs','multiselect','on');

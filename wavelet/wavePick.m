@@ -1,6 +1,7 @@
 function [peaks]=wavePick(dcfpathname,debugFlag)
 %[peaks]=wavePick(dcfpathname,debugFlag)
 % The main wavelet peak picking function for IVFC.
+% peaks: [time height].
 %
 %	wavePick is free software: you can redistribute it and/or modify
 %	it under the terms of the GNU General Public License as published by
@@ -79,8 +80,8 @@ delta_mad = mad(d_1,1) / .6745; % mad(x,1) for median absolute value. mad(x,0) f
 % From Matlab Doc of mad function:
 % different scale estimates: std < mean absolute < median absolute (< stands for worse than in robustness).
 % For normally distributed data, multiply mad by one of the following factors to obtain an estimate of the normal scale parameter Ïƒ, e.g. std:
-% sigma = 1.253*mad(X,0) â€” For mean absolute deviation
-% sigma = 1.4826*mad(X,1) â€” For median absolute deviation
+% sigma = 1.253*mad(X,0) â€?For mean absolute deviation
+% sigma = 1.4826*mad(X,1) â€?For median absolute deviation
 % 1.4826*0.6745=1
 
 % The threshold is different from Dohono1995's - thre = delta * sqrt(2*logn/n). But the original is thre = delta * sqrt(logn). I think it's wrong.
@@ -138,29 +139,41 @@ end
 
 %% Peak detection.
 
-%	fs = 1 / (t(2) - t(1));
-%	mm_time = .25;%.05;%.25; % Seconds
-%	mm_points = floor(fs * mm_time);
-%	% mm_points must be odd now. Not even any more.
-%	if mod(mm_points, 2) == 0
-%		mm_points = mm_points + 1;
-%	end
-%	% x_out_med = zeros(length(x_out), 1);
-%	% x_out_dev = zeros(length(x_out), 1);
-%	%% The David's code is shifted version.
-%	% for k = 1 : length(x_out) - mm_points
-%	% 	x_out_med(k) = median(x_in(k : k + mm_points));
-%	% 	x_out_dev(k) = std(x_in(k : k + mm_points));
-%	% end
-%	halfLen=(mm_points-1)/2;
-
 [path file]=fileparts(dcfpathname);
-fid=fopen(['../rollMedian/temp/' file '.dat.mead'],'rb');
-% dataLenOut=fread(fid,1,'uint64','l');
-x_out_med=fread(fid,length(x_in),'double','l');
-% x_out_med=fscanf(fid,'%f',length(x_in));
-x_out_mad=fread(fid,length(x_in),'double','l');
-fclose(fid);
+datMeadFile=['../rollMedian/temp/' file '.dat.mead'];
+if exist(datMeadFile,'file')
+    fid=fopen(datMeadFile,'rb');
+    % dataLenOut=fread(fid,1,'uint64','l');
+    x_out_med=fread(fid,length(x_in),'double','l');
+    % x_out_med=fscanf(fid,'%f',length(x_in));
+    x_out_mad=fread(fid,length(x_in),'double','l');
+    fclose(fid);
+else
+	fs = 1 / (t(2) - t(1));
+	mm_time = .25;%.05;%.25; % Seconds
+	mm_points = floor(fs * mm_time);
+	% mm_points must be odd now. Not even any more.
+	if mod(mm_points, 2) == 0
+		mm_points = mm_points + 1;
+    end
+    halfLen=(mm_points-1)/2;
+	x_out_med = zeros(length(x_out), 1);
+	x_out_mad = zeros(length(x_out), 1);
+	% The David's code is shifted version.
+	% for k = 1 : length(x_out) - mm_points
+	% 	x_out_med(k) = median(x_in(k : k + mm_points));
+	% 	x_out_dev(k) = std(x_in(k : k + mm_points));
+    % end
+    lenX=length(x_out);
+    for k = halfLen+1 : lenX - halfLen
+        x_out_med(k) = median(x_in(k-halfLen : k+halfLen));
+        x_out_mad(k) = mad(x_in(k-halfLen : k+halfLen),1);
+    end
+    x_out_med(1:halfLen)=x_out_med(halfLen+1);
+    x_out_med(lenX-halfLen+1:lenX)=x_out_med(lenX-halfLen);
+    x_out_mad(1:halfLen)=x_out_mad(halfLen+1);
+    x_out_mad(lenX-halfLen+1:lenX)=x_out_mad(lenX-halfLen);
+end
 
 x_out_dev=1.4826 * x_out_mad;
 
@@ -389,6 +402,9 @@ if debugFlag
     stem(t(peaks), x_in(peaks), 'or');
     hold off;
 
+    if ~exist('temp','dir')
+        mkdir('temp');
+    end
 	saveas(gcf,['./temp/' file '_wavelet.fig']);
 
 end

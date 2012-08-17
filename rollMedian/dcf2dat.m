@@ -1,8 +1,27 @@
-function dcf2dat(dcfpathname)
+function dcf2dat
 
-if nargin<1
-	dcfpathname='../../data/testData/0-15min_clip0-300.dcf';
+dirName=uigetdir('.');
+
+% if nargin<1
+% 	dcfpathname='../../data/testData/0-15min_clip0-300.dcf';
+% end
+
+files=dir(fullfile(dirName,'*.dcf'));
+
+for i=1:length(files)
+	procOneFile(fullfile(dirName,files(i).name));
 end
+
+% Save filenames to a filelist for rollenmedian.exe.
+fid=fopen([dirName '.fl'],'w');
+for i=1:length(files)
+	fprintf(fid,'%s\n',fullfile(dirName,files(i).name));
+end
+fclose(fid);
+
+end
+
+function procOneFile(dcfpathname)
 
 dcf=readDcf(dcfpathname);
 t = dcf(:, 1);
@@ -30,14 +49,16 @@ end
 halfLen=(mm_points-1)/2;
 dataLen=length(x);
 
-if ~exist('temp','dir')
-	mkdir('temp');
-end
+% if ~exist('temp','dir')
+% 	mkdir('temp');
+% end
 
-fid=fopen(['temp/' file '.dat'],'wb');
+% fid=fopen(['temp/' file '.dat'],'wb');
+fid=fopen(fullfile(path,[file '.dat']),'wb');
 %fid=fopen(['toRollMedian.dat'],'wb');
 fwrite(fid, halfLen, 'uint32', 'l');
 fwrite(fid, dataLen, 'uint32', 'l');
 fwrite(fid, x_in, 'double', 'l'); % Little-endian.
 fclose(fid);
 
+end

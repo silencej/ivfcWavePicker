@@ -1,5 +1,5 @@
-
+*.eps
 .DS_Store
 *~
 .svn
-.svn/*
+*.o

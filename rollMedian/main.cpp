@@ -8,6 +8,7 @@
 using namespace std;
 
 bool littleEndian();
+int procOneFile(const string&);
 
 // http://www.cplusplus.com/forum/general/6347/
 // The following template is contributed by helios.
@@ -44,12 +45,34 @@ int main(int argc, char** argv)
 	// Make sure the input and output binary are all little endian.
 
 //	fstream fs("../0-15min_clip0-300.dat", ios::in | ios::binary);
-	fstream fs(argv[1], ios::in | ios::binary);
+	fstream fs(argv[1], ios::in);
 //	fstream fs("../toRollMedian.dat", ios::in | ios::binary);
 	if (!fs)
 	{
 		cerr<<"Can't open file!"<<endl;
-		return 0;
+		return 1;
+	}
+	string filename;
+	do {
+		getline(fs,filename);
+		if (!filename.empty())
+			procOneFile(filename);
+	} while (!fs.eof());
+
+	fs.close();
+	return 0;
+
+}
+
+int procOneFile(const string& filenameIn)
+{
+
+	fstream fs(filenameIn.c_str(), ios::in | ios::binary);
+//	fstream fs("../toRollMedian.dat", ios::in | ios::binary);
+	if (!fs)
+	{
+		cerr<<"Can't open file!"<<endl;
+		return 1;
 	}
 
 //	fs.seekg(0,ios::end);
@@ -93,7 +116,7 @@ int main(int argc, char** argv)
 	vector<double> medianVec (rollMedObj.getMedian());
 	vector<double> madVec (rollMedObj.getMad());
 
-	string filename(argv[1]);
+	string filename(filenameIn);
 	filename.append(".mead"); // median and mad output file.
 
 //	fs.open("../toWavePick.dat", ios::binary | ios::out);

@@ -30,7 +30,7 @@ T invertIfBig(T val)
 	// Determine Endianness.
 	if (!isLittleEndian)
 	{
-//		cerr<<"The machine is Big Endian, while data is little endian!"<<endl;
+//		cout<<"The machine is Big Endian, while data is little endian!"<<endl;
 		return invert<T> (val);
 	}
 	else
@@ -44,34 +44,43 @@ int main(int argc, char** argv)
 
 	// Make sure the input and output binary are all little endian.
 
+	cout<<"getRollMedian runs..."<<endl;
+
 //	fstream fs("../0-15min_clip0-300.dat", ios::in | ios::binary);
 	fstream fs(argv[1], ios::in);
 //	fstream fs("../toRollMedian.dat", ios::in | ios::binary);
 	if (!fs)
 	{
-		cerr<<"Can't open file!"<<endl;
+		cout<<"Can't open file!"<<endl;
 		return 1;
 	}
 	string filename;
 	do {
-		getline(fs,filename);
+		getline(fs,filename,'\n');
+		cout<<"Read filename: "<<filename.c_str()<<endl;
 		if (!filename.empty())
 			procOneFile(filename);
 	} while (!fs.eof());
 
 	fs.close();
+	cout<<"Finished."<<endl;
 	return 0;
 
 }
 
 int procOneFile(const string& filenameIn)
 {
+//	cout<<"Process "<<filenameIn.c_str()<<endl;
 
-	fstream fs(filenameIn.c_str(), ios::in | ios::binary);
+	string datFile(filenameIn);
+	string::iterator datFileIt=datFile.end();
+	datFile.replace(datFileIt-4,datFileIt,".dat");
+	cout<<"Process "<<datFile<<endl;
+	fstream fs(datFile.c_str(), ios::in | ios::binary);
 //	fstream fs("../toRollMedian.dat", ios::in | ios::binary);
 	if (!fs)
 	{
-		cerr<<"Can't open file!"<<endl;
+		cout<<"Can't open file!"<<endl;
 		return 1;
 	}
 
@@ -83,9 +92,11 @@ int procOneFile(const string& filenameIn)
 	unsigned long halfLen(0);
 	fs.read( reinterpret_cast<char*>(&halfLen), 4);
 	halfLen=invertIfBig<unsigned long> (halfLen);
+	cout<<"halfLen = "<<halfLen<<endl;
 	unsigned long dataLen(0);
 	fs.read( reinterpret_cast<char*>(&dataLen), 4);
 	dataLen=invertIfBig<unsigned long> (dataLen);
+	cout<<"dataLen = "<<dataLen<<endl;
 
 	vector<double> input (dataLen,0);
 
@@ -118,7 +129,6 @@ int procOneFile(const string& filenameIn)
 
 	string filename(filenameIn);
 	filename.append(".mead"); // median and mad output file.
-
 //	fs.open("../toWavePick.dat", ios::binary | ios::out);
 //	fs.open("../relay.data", ios::out);
 	fs.open(filename.c_str(), ios::binary | ios::out);

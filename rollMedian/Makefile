@@ -3,7 +3,8 @@
 ### specify srcs here. ###
 SRCS= main.cpp rollMedian.cpp
 GLOBALS= debugMode.h
-PROJ= getRollMed
+# PROJ= getRollMed
+PROJ= rollMedian.exe
 #HEADS= rollMedian.h
 
 ### First Rule. ###
@@ -43,7 +44,9 @@ install:
 
 .PHONY: clean
 clean:
-	rm -f ${PROJ} ; rm -rf ${OBJS}
+#	rm -f ${PROJ}
+	rm -rf ${OBJS}
+#	-rm getRollMedian.exe
 
 ${PROJ}: ${OBJS} ${GLOBALS}
 	${CC} ${LDFLAGS} ${OBJS} -o ${PROJ}

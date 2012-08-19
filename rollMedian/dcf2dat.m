@@ -1,6 +1,11 @@
 function dcf2dat
 
+addpath('../wavelet');
+
 dirName=uigetdir('.');
+if ~ischar(dirName)
+    return;
+end
 
 % if nargin<1
 % 	dcfpathname='../../data/testData/0-15min_clip0-300.dcf';
@@ -13,7 +18,15 @@ for i=1:length(files)
 end
 
 % Save filenames to a filelist for rollenmedian.exe.
-fid=fopen([dirName '.fl'],'w');
+% pathname=fileparts(dirName);
+sepStr=filesep;
+% On windows, filesep should be escaped.
+if strcmp(sepStr,'\')
+    sepStr='\\';
+end
+regCond=['(?<=' sepStr ')[^' sepStr ']*$'];
+dirname=regexp(dirName,regCond,'match'); % dirname is a cell string.
+fid=fopen([dirname{1} '.fl'],'w');
 for i=1:length(files)
 	fprintf(fid,'%s\n',fullfile(dirName,files(i).name));
 end

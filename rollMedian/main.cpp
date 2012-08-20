@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -75,6 +76,21 @@ int procOneFile(const string& filenameIn)
 	string datFile(filenameIn);
 	string::iterator datFileIt=datFile.end();
 	datFile.replace(datFileIt-4,datFileIt,".dat");
+	// Backslashes \ in windows path should be replaced by /.
+	// Also, the char '\' should be also be escaped as '\\'.
+	// replace(datFile.begin(),datFile.end(),"\\","\\\\");
+
+	stringstream ss;
+  for (int i = 0; i < datFile.length(); ++i) {
+     if (datFile[i] == '\\') {
+       ss<<"\\\\";
+     }
+     else {
+       ss<<datFile[i];
+     }
+  }
+  datFile=ss.str();
+
 	cout<<"Process "<<datFile<<endl;
 	fstream fs(datFile.c_str(), ios::in | ios::binary);
 //	fstream fs("../toRollMedian.dat", ios::in | ios::binary);

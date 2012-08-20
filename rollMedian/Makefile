@@ -4,7 +4,7 @@
 SRCS= main.cpp rollMedian.cpp
 GLOBALS= debugMode.h
 # PROJ= getRollMed
-PROJ= rollMedian.exe
+PROJ= rollMedian
 #HEADS= rollMedian.h
 
 ### First Rule. ###

@@ -53,13 +53,13 @@ rollMedian::rollMedian(const vector<double>& inputDataTmp, int halfLenTmp) :
 		cout<<"Sortseq "<<i<<":"<<endl;
 		for (list<double>::iterator it=sortSeq.begin(); it!=sortSeq.end(); it++)
 			cout<<*it<<endl;
-		cout<<"medianVec: "<<medianVec[i-1]<<endl;
+		cout<<"Median in medianVec: "<<medianVec[i-1]<<endl;
 #endif
 
 		low=lower_bound(sortSeq.begin(),sortSeq.end(), firstValue);
 #ifdef debugMode
 		cout<<"firstValue: "<<firstValue<<endl;
-		cout<<"Find lower_bound to firstValue: "<<*low<<endl;
+		cout<<"Lower_bound to firstValue: "<<*low<<" (Should be equal.)"<<endl;
 #endif
 		advance(low,1);
 		double rightNeigh(*low);
@@ -90,7 +90,7 @@ rollMedian::rollMedian(const vector<double>& inputDataTmp, int halfLenTmp) :
 		low=lower_bound(sortSeq.begin(),sortSeq.end(),lastValue);
 #ifdef debugMode
 		cout<<"lastValue: "<<lastValue<<endl;
-		cout<<"Find lower_bound to lastValue: "<<*low<<endl;
+		cout<<"Find lower_bound to lastValue: "<<*low<<" (To insert before it.)"<<endl;
 #endif
 		// Insert will insert before the position specified.
 //		low++;
@@ -103,6 +103,9 @@ rollMedian::rollMedian(const vector<double>& inputDataTmp, int halfLenTmp) :
 		//For next round.
 		firstValue=(*inputData)[i-halfLen];
 		lastValue=(*inputData)[i+halfLen+1];
+
+		if (i%10==0)
+			cout<<"Iteration i="<<i<<endl;
 	}
 
 	vector<double> firstPart (halfLen, medianVec[halfLen]);

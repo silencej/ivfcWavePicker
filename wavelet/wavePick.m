@@ -80,8 +80,8 @@ delta_mad = mad(d_1,1) / .6745; % mad(x,1) for median absolute value. mad(x,0) f
 % From Matlab Doc of mad function:
 % different scale estimates: std < mean absolute < median absolute (< stands for worse than in robustness).
 % For normally distributed data, multiply mad by one of the following factors to obtain an estimate of the normal scale parameter Ïƒ, e.g. std:
-% sigma = 1.253*mad(X,0) â€?For mean absolute deviation
-% sigma = 1.4826*mad(X,1) â€?For median absolute deviation
+% sigma = 1.253*mad(X,0) ï¿½?For mean absolute deviation
+% sigma = 1.4826*mad(X,1) ï¿½?For median absolute deviation
 % 1.4826*0.6745=1
 
 % The threshold is different from Dohono1995's - thre = delta * sqrt(2*logn/n). But the original is thre = delta * sqrt(logn). I think it's wrong.
@@ -139,8 +139,9 @@ end
 
 %% Peak detection.
 
-[path file]=fileparts(dcfpathname);
-datMeadFile=['../rollMedian/temp/' file '.dat.mead'];
+% [path file]=fileparts(dcfpathname);
+% datMeadFile=['../rollMedian/temp/' file '.dat.mead'];
+datMeadFile=strrep(dcfpathname,'.dcf','.mead');
 if exist(datMeadFile,'file')
     fid=fopen(datMeadFile,'rb');
     % dataLenOut=fread(fid,1,'uint64','l');
@@ -153,8 +154,8 @@ else
 	mm_time = .25;%.05;%.25; % Seconds
 	mm_points = floor(fs * mm_time);
 	% mm_points must be odd now. Not even any more.
-	if mod(mm_points, 2) == 0
-		mm_points = mm_points + 1;
+    if mod(mm_points, 2) == 0
+        mm_points = mm_points + 1;
     end
     halfLen=(mm_points-1)/2;
 	x_out_med = zeros(length(x_out), 1);
@@ -402,10 +403,12 @@ if debugFlag
     stem(t(peaks), x_in(peaks), 'or');
     hold off;
 
-    if ~exist('temp','dir')
-        mkdir('temp');
-    end
-	saveas(gcf,['./temp/' file '_wavelet.fig']);
+%     if ~exist('temp','dir')
+%         mkdir('temp');
+%     end
+    waveFig=strrep(dcfpathname,'.dcf','_wavelet.fig');
+	saveas(gcf,waveFig);
+    close all;
 
 end
 

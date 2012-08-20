@@ -113,9 +113,9 @@ int procOneFile(const string& filenameIn)
 
 	// Debug
 #ifdef debugMode
-	input.erase(input.begin()+30,input.end());
-	halfLen=5;
-	cout<<"Debug mode on, dataLen: "<<input.size()<<endl;
+//	input.erase(input.begin()+30,input.end());
+//	halfLen=5;
+	cout<<"Debug mode on, dataLen: "<<input.size()<<", halfLen="<<halfLen<<endl;
 #endif
 #ifdef debugModeGetMad
 	input.erase(input.begin()+10,input.end());
@@ -127,8 +127,15 @@ int procOneFile(const string& filenameIn)
 	vector<double> medianVec (rollMedObj.getMedian());
 	vector<double> madVec (rollMedObj.getMad());
 
+// Debug mode does not produce .mead files.
+#ifdef debugMode
+	return 0;
+#endif
+
 	string filename(filenameIn);
-	filename.append(".mead"); // median and mad output file.
+	string::iterator fileIt=filename.end();
+	filename.replace(fileIt-4,fileIt,".mead"); // median and mad output file.
+//	filename.append(".mead"); // median and mad output file.
 //	fs.open("../toWavePick.dat", ios::binary | ios::out);
 //	fs.open("../relay.data", ios::out);
 	fs.open(filename.c_str(), ios::binary | ios::out);

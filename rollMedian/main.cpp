@@ -47,12 +47,19 @@ int main(int argc, char** argv)
 
 	cout<<"getRollMedian runs..."<<endl;
 
+	fstream tests("E:/works/ivfcWavePicker/rollMedian/a.txt",ios::in);
+	if (!tests)
+		cout<<"Test fail!!!"<<endl;
+	string aa;
+	getline(tests,aa);
+	cout<<aa<<endl;
+
 //	fstream fs("../0-15min_clip0-300.dat", ios::in | ios::binary);
 	fstream fs(argv[1], ios::in);
 //	fstream fs("../toRollMedian.dat", ios::in | ios::binary);
 	if (!fs)
 	{
-		cout<<"Can't open file!"<<endl;
+		cout<<"Can't open file: "<<argv[1]<<endl;
 		return 1;
 	}
 	string filename;
@@ -78,25 +85,25 @@ int procOneFile(const string& filenameIn)
 	datFile.replace(datFileIt-4,datFileIt,".dat");
 	// Backslashes \ in windows path should be replaced by /.
 	// Also, the char '\' should be also be escaped as '\\'.
-	// replace(datFile.begin(),datFile.end(),"\\","\\\\");
+	 replace(datFile.begin(),datFile.end(),'\\','/');
 
-	stringstream ss;
-  for (int i = 0; i < datFile.length(); ++i) {
-     if (datFile[i] == '\\') {
-       ss<<"\\\\";
-     }
-     else {
-       ss<<datFile[i];
-     }
-  }
-  datFile=ss.str();
+	//stringstream ss;
+ // for (int i = 0; i < datFile.length(); ++i) {
+ //    if (datFile[i] == '\\') {
+ //      ss<<"\\\\";
+ //    }
+ //    else {
+ //      ss<<datFile[i];
+ //    }
+ // }
+ // datFile=ss.str();
 
 	cout<<"Process "<<datFile<<endl;
 	fstream fs(datFile.c_str(), ios::in | ios::binary);
 //	fstream fs("../toRollMedian.dat", ios::in | ios::binary);
 	if (!fs)
 	{
-		cout<<"Can't open file!"<<endl;
+		cout<<"Can't open file: "<<datFile<<endl;
 		return 1;
 	}
 
@@ -148,13 +155,18 @@ int procOneFile(const string& filenameIn)
 	return 0;
 #endif
 
-	string filename(filenameIn);
-	string::iterator fileIt=filename.end();
+	string filename(datFile);
+	string::iterator fileIt=datFile.end();
 	filename.replace(fileIt-4,fileIt,".mead"); // median and mad output file.
 //	filename.append(".mead"); // median and mad output file.
 //	fs.open("../toWavePick.dat", ios::binary | ios::out);
 //	fs.open("../relay.data", ios::out);
 	fs.open(filename.c_str(), ios::binary | ios::out);
+	if (!fs)
+	{
+		cout<<"Unable to open file for writing: "<<filename<<endl;
+		return 1;
+	}
 	unsigned long dataLenOut(invertIfBig<unsigned long> (dataLen));
 	fs.write( reinterpret_cast<char*>(&dataLenOut), 8);
 	for (vector<double>::iterator i=medianVec.begin(); i!=medianVec.end(); i++)

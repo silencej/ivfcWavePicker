@@ -61,16 +61,23 @@ rollMedian::rollMedian(const vector<double>& inputDataTmp, int halfLenTmp) :
 		cout<<"firstValue: "<<firstValue<<endl;
 		cout<<"Lower_bound to firstValue: "<<*low<<" (Should be equal.)"<<endl;
 #endif
-		advance(low,1);
-		double rightNeigh(*low);
-		advance(low,-1);
+//		advance(low,1);
+		double rightNeigh(100000000);
+
 		// lower_bound is no less than halfLen.
+		// The firstValue is in the last position.
 		if ((distance(low,sortSeq.end())==0))
 		{
 			low--;
 			cout<<"lower_bound to the end()???"<<endl;
+		} else if (distance(low,sortSeq.end())>1)
+		{
+			advance(low,1);
+			rightNeigh=*low;
+			advance(low,-1);
 		}
-		else if( (distance(low,sortSeq.end())>1) && ( abs(*low-firstValue) > abs(rightNeigh-firstValue) ) )
+
+		if( (distance(low,sortSeq.end())>1) && ( abs(*low-firstValue) > abs(rightNeigh-firstValue) ) )
 		{
 #ifdef debugMode
 			cout<<"It Happens!!"<<endl;
@@ -104,7 +111,8 @@ rollMedian::rollMedian(const vector<double>& inputDataTmp, int halfLenTmp) :
 		firstValue=(*inputData)[i-halfLen];
 		lastValue=(*inputData)[i+halfLen+1];
 
-		if (i%10==0)
+		if (i%5000==0)
+//		if (i==1422)
 			cout<<"Iteration i="<<i<<endl;
 	}
 

@@ -1,7 +1,7 @@
-function [peaks]=wavePick(dcfpathname,debugFlag)
-%[peaks]=wavePick(dcfpathname,debugFlag)
+function [peaks,snr]=wavePick(dcfpathname,debugFlag)
+%[peaks,snr]=wavePick(dcfpathname,debugFlag)
 % The main wavelet peak picking function for IVFC.
-% peaks: [time height].
+% peaks: the indices of picked peaks.
 %
 %	wavePick is free software: you can redistribute it and/or modify
 %	it under the terms of the GNU General Public License as published by
@@ -80,8 +80,8 @@ delta_mad = mad(d_1,1) / .6745; % mad(x,1) for median absolute value. mad(x,0) f
 % From Matlab Doc of mad function:
 % different scale estimates: std < mean absolute < median absolute (< stands for worse than in robustness).
 % For normally distributed data, multiply mad by one of the following factors to obtain an estimate of the normal scale parameter Ïƒ, e.g. std:
-% sigma = 1.253*mad(X,0) ï¿½?For mean absolute deviation
-% sigma = 1.4826*mad(X,1) ï¿½?For median absolute deviation
+% sigma = 1.253*mad(X,0) ï¿?For mean absolute deviation
+% sigma = 1.4826*mad(X,1) ï¿?For median absolute deviation
 % 1.4826*0.6745=1
 
 % The threshold is different from Dohono1995's - thre = delta * sqrt(2*logn/n). But the original is thre = delta * sqrt(logn). I think it's wrong.
@@ -282,6 +282,8 @@ for i=1:length(peaks)-1
     end
 end
 peaks=peaks(peaks~=0);
+
+snr=getSnr(x_in,peaks);
 
 % if debugFlag
 %     plot(t,dx, ':', 'Color', [.25 .25 .25]);

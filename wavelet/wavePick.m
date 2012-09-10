@@ -1,5 +1,5 @@
-function [peaks,snr]=wavePick(dcfpathname,debugFlag)
-%[peaks,snr]=wavePick(dcfpathname,debugFlag)
+function [peaks,snr]=wavePick(input,debugFlag)
+%[peaks,snr]=wavePick(input,debugFlag)
 % The main wavelet peak picking function for IVFC.
 % peaks: the indices of picked peaks.
 %
@@ -31,10 +31,20 @@ if nargin<2
 	debugFlag=true;
 end
 if nargin<1
-	dcfpathname='../../data/testData/0-15min_clip0-300.dcf';
+	input='../../data/testData/0-15min_clip0-300.dcf';
 end
 
-dcf=readDcf(dcfpathname);
+if ischar(input)
+    dcf=readDcf(input);
+elseif isnumeric(input)
+    if size(input,1)~=2
+        input=input';
+    end
+    if size(input,1)~=2
+        error('Input should either be a filename or a data with format [time intensity].');
+    end
+    dcf=input;
+end
 t = dcf(:, 1);
 x = dcf(:, 2);
 

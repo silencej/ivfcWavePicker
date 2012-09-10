@@ -34,13 +34,15 @@ if nargin<1
 	input='../../data/testData/0-15min_clip0-300.dcf';
 end
 
+dcfFlag=0; % Ture if input is a dcf file, false if is a data matrix.
 if ischar(input)
     dcf=readDcf(input);
+    dcfFlag=1;
 elseif isnumeric(input)
-    if size(input,1)~=2
+    if size(input,2)~=2
         input=input';
     end
-    if size(input,1)~=2
+    if size(input,2)~=2
         error('Input should either be a filename or a data with format [time intensity].');
     end
     dcf=input;
@@ -61,7 +63,7 @@ x_in = x;
 if debugFlag
     close all;
 	figure;
-	title(dcfpathname);
+% 	title(dcfpathname);
 %     plot(t,x_in, 'Color', [.075 .125 .075]);
 	plot(t,x_in,'-k');
 end
@@ -151,7 +153,11 @@ end
 
 % [path file]=fileparts(dcfpathname);
 % datMeadFile=['../rollMedian/temp/' file '.dat.mead'];
-datMeadFile=strrep(dcfpathname,'.dcf','.mead');
+if dcfFlag
+    datMeadFile=strrep(input,'.dcf','.mead');
+else
+    datMeadFile='';
+end
 if exist(datMeadFile,'file')
     fid=fopen(datMeadFile,'rb');
     % dataLenOut=fread(fid,1,'uint64','l');
@@ -279,6 +285,8 @@ end
 % compare peak_i and peak_i+1, move the higher one to peak_i+1 and put
 % peak_i quenched to 0.
 
+% if peaks(1)==0, it means there is no peak.
+if peaks(1)&&peaks(2)
 deblurWinLen=25; % unit: points.
 for i=1:length(peaks)-1
     if peaks(i+1)-peaks(i)<deblurWinLen
@@ -290,6 +298,7 @@ for i=1:length(peaks)-1
         end
         peakNum=peakNum-1;
     end
+end
 end
 peaks=peaks(peaks~=0);
 
@@ -418,10 +427,11 @@ if debugFlag
 %     if ~exist('temp','dir')
 %         mkdir('temp');
 %     end
+if dcfFlag
     waveFig=strrep(dcfpathname,'.dcf','_wavelet.fig');
 	saveas(gcf,waveFig);
     close all;
-
+end
 end
 
 

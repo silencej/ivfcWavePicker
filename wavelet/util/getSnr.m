@@ -6,11 +6,7 @@ function snr=getSnr(data,pidx,winLen)
 % The winLen defaults to 31.
 % data is 1-dimensional.
 
-<<<<<<< HEAD
-debugFlag=1;
-=======
 debugFlag=0;
->>>>>>> origin/master
 
 if nargin<3
     winLen=31;
